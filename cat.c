@@ -3,18 +3,22 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-static void do_cat(const char *path);
+static void do_cat(FILE* f);
 static void do_stdin_cat();
 static void die(const char *s);
 
 int main(int argc, char const* argv[])
 {
     int i;
+    FILE* f;
     if (argc < 2) {
         do_stdin_cat();
     } else {
         for (i = 1; i < argc; i++) {
-            do_cat(argv[i]);
+            f = fopen(argv[i], "r");
+            if (f == NULL) die(argv[i]);
+            do_cat(f);
+            if (fclose(f) == EOF) die(argv[i]);
         }
     }
     return 0;
@@ -38,17 +42,12 @@ do_stdin_cat()
     }
 }
 static void
-do_cat(const char *path)
+do_cat(FILE *f)
 {
-    FILE* f;
     char c;
-
-    f = fopen(path, "r");
-    if (f == NULL) die(path);
     while((c = fgetc(f)) != EOF) {
         if (putchar(c) < 0) exit(1);
     }
-    if (fclose(f) < 0) die(path);
 };
 
 static void
