@@ -14,6 +14,7 @@ int main(int argc, char const* argv[])
 {
     int i;
     int count;
+    int total_count = 0;
     const char* path;
     if (argc < 2) {
         fprintf(stderr, "2args");
@@ -23,7 +24,11 @@ int main(int argc, char const* argv[])
             path = argv[i];
             count = do_wc_l(argv[i]);
             printf("%8d %s\n", count, path);
+            total_count += count;
         }
+    }
+    if (argc > 3) {
+        printf("%8d %s\n", total_count, "total");
     }
     return 0;
 }
