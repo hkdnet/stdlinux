@@ -23,8 +23,6 @@ int main(int argc, char const* argv[])
     return 0;
 }
 
-#define BUFFER_SIZE 2048
-
 static void
 do_cat(FILE *f)
 {
