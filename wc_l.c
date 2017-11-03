@@ -7,7 +7,7 @@
 
 static void die(const char *s);
 static void print_count(int count, const char *path);
-static int do_wc_l(const char *path);
+static int do_wc_l(FILE *f);
 static int do_stdin_wc_l();
 
 #define BUFFER_SIZE 2048
@@ -17,6 +17,7 @@ int main(int argc, char const* argv[])
     int i;
     int count;
     int total_count = 0;
+    FILE* f;
     const char* path;
     if (argc < 2) {
         count = do_stdin_wc_l();
@@ -25,7 +26,9 @@ int main(int argc, char const* argv[])
     }
     for (i = 1; i < argc; i++) {
         path = argv[i];
-        count = do_wc_l(argv[i]);
+        f = fopen(path, "r");
+        if (!f) die(path);
+        count = do_wc_l(f);
         print_count(count, path);
         total_count += count;
     }
@@ -61,14 +64,10 @@ do_stdin_wc_l()
 }
 
 static int
-do_wc_l(const char *path)
+do_wc_l(FILE* f)
 {
-    int count = 0;
-    FILE* f;
     char c;
-    f = fopen(path, "r");
-    if (!f) die(path);
-
+    int count = 0;
     while((c = fgetc(f)) != EOF) {
         if(c == '\n') count++;
     }
