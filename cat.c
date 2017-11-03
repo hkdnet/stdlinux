@@ -4,7 +4,6 @@
 #include <unistd.h>
 
 static void do_cat(FILE* f);
-static void do_stdin_cat();
 static void die(const char *s);
 
 int main(int argc, char const* argv[])
@@ -12,7 +11,7 @@ int main(int argc, char const* argv[])
     int i;
     FILE* f;
     if (argc < 2) {
-        do_stdin_cat();
+        do_cat(stdin);
     } else {
         for (i = 1; i < argc; i++) {
             f = fopen(argv[i], "r");
@@ -26,21 +25,6 @@ int main(int argc, char const* argv[])
 
 #define BUFFER_SIZE 2048
 
-static void
-do_stdin_cat()
-{
-    unsigned char buf[BUFFER_SIZE];
-    int n;
-
-    char *s = "stdin";
-
-    for(;;) {
-        n = read(STDIN_FILENO, buf, sizeof buf);
-        if (n < 0) die(s);
-        if (n == 0) break;
-        if (write(STDOUT_FILENO, buf, n) < 0) die(s);
-    }
-}
 static void
 do_cat(FILE *f)
 {
