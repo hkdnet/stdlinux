@@ -63,21 +63,14 @@ do_stdin_wc_l()
 static int
 do_wc_l(const char *path)
 {
-    int fd;
-    unsigned char buf[BUFFER_SIZE];
-    int n;
-    int i;
     int count = 0;
-    fd = open(path, O_RDONLY);
-    if (fd < 0) die(path);
+    FILE* f;
+    char c;
+    f = fopen(path, "r");
+    if (!f) die(path);
 
-    for(;;) {
-        n = read(fd, buf, sizeof buf);
-        if (n < 0) die(path);
-        if (n == 0) break;
-        for(i = 0; i < n; i++) {
-            if(buf[i] == '\n') count++;
-        }
+    while((c = fgetc(f)) != EOF) {
+        if(c == '\n') count++;
     }
 
     return count;
