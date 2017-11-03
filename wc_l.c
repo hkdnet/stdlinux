@@ -7,8 +7,8 @@
 
 static void die(const char *s);
 static int do_wc_l(const char *path);
-#define BUFFER_SIZE 2048
 
+#define BUFFER_SIZE 2048
 
 int main(int argc, char const* argv[])
 {
