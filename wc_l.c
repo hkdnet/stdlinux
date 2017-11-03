@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 static void die(const char *s);
+static void print_count(int count, const char *path);
 static int do_wc_l(const char *path);
 static int do_stdin_wc_l();
 
@@ -19,19 +20,25 @@ int main(int argc, char const* argv[])
     const char* path;
     if (argc < 2) {
         count = do_stdin_wc_l();
-        printf("%8d\n", count);
+        print_count(count, "");
         exit(0);
     }
     for (i = 1; i < argc; i++) {
         path = argv[i];
         count = do_wc_l(argv[i]);
-        printf("%8d %s\n", count, path);
+        print_count(count, path);
         total_count += count;
     }
     if (argc > 3) {
-        printf("%8d %s\n", total_count, "total");
+        print_count(total_count, "total");
     }
     return 0;
+}
+
+static void
+print_count(int count, const char *path)
+{
+    printf("%8d %s\n", count, path);
 }
 
 static int
