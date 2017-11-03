@@ -3,7 +3,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-static int resolve_path(const char *path);
 static void do_cat(const char *path);
 static void die(const char *s);
 
@@ -22,15 +21,6 @@ int main(int argc, char const* argv[])
 
 #define BUFFER_SIZE 2048
 
-static int
-resolve_path(const char *path)
-{
-    int fd;
-    fd = open(path, O_RDONLY);
-    if (fd < 0) die(path);
-    return fd;
-}
-
 static void
 do_cat(const char *path)
 {
@@ -38,7 +28,8 @@ do_cat(const char *path)
     unsigned char buf[BUFFER_SIZE];
     int n;
 
-    fd = resolve_path(path);
+    fd = open(path, O_RDONLY);
+    if (fd < 0) die(path);
     for(;;) {
         n = read(fd, buf, sizeof buf);
         if (n < 0) die(path);
