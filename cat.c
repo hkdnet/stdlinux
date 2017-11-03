@@ -40,19 +40,15 @@ do_stdin_cat()
 static void
 do_cat(const char *path)
 {
-    int fd;
-    unsigned char buf[BUFFER_SIZE];
-    int n;
+    FILE* f;
+    char c;
 
-    fd = open(path, O_RDONLY);
-    if (fd < 0) die(path);
-    for(;;) {
-        n = read(fd, buf, sizeof buf);
-        if (n < 0) die(path);
-        if (n == 0) break;
-        if (write(STDOUT_FILENO, buf, n) < 0) die(path);
+    f = fopen(path, "r");
+    if (f == NULL) die(path);
+    while((c = fgetc(f)) != EOF) {
+        if (putchar(c) < 0) exit(1);
     }
-    if (close(fd) < 0) die(path);
+    if (fclose(f) < 0) die(path);
 };
 
 static void
