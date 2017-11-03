@@ -9,8 +9,6 @@ static void die(const char *s);
 static void print_count(int count, const char *path);
 static int do_wc_l(FILE *f);
 
-#define BUFFER_SIZE 2048
-
 int main(int argc, char const* argv[])
 {
     int i;
