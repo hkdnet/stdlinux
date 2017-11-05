@@ -28,7 +28,17 @@ do_cat(FILE *f)
 {
     char c;
     while((c = fgetc(f)) != EOF) {
-        if (putchar(c) < 0) exit(1);
+        if (c == '\t') {
+            if (putchar('\\') < 0) exit(1);
+            if (putchar('t') < 0) exit(1);
+        }
+        else if (c == '\n') {
+            if (putchar('$') < 0) exit(1);
+            if (putchar('\n') < 0) exit(1);
+        }
+        else {
+            if (putchar(c) < 0) exit(1);
+        }
     }
 };
 
