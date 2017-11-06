@@ -38,7 +38,7 @@ do_cat(FILE* f)
     char buf[BUFFER_SIZE];
     int n;
     for(;;) {
-        n = fread(buf, sizeof(char), sizeof buf, f);
+        n = fread(buf, sizeof(char), sizeof buf / sizeof(char), f);
         if (ferror(f)) {
             perror("cat_f");
             exit(1);
