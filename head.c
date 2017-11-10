@@ -18,7 +18,7 @@ static struct option longopts[] = {
  * Read from stdin, for N lines
  * Usage: head N
  */
-int main(int argc, char const* argv[])
+int main(int argc, char * const argv[])
 {
     long n = DEFAULT_N_LINES;
     int opt;
