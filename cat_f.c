@@ -39,13 +39,13 @@ do_cat(FILE* f)
     int n;
     for(;;) {
         n = fread(buf, sizeof(char), sizeof buf / sizeof(char), f);
-        if (ferror(f)) {
-            perror("cat_f");
-            exit(1);
-        }
-        fwrite(buf, sizeof(char), n, stdout);
-        if (feof(f)) {
+        if (n <= 0) {
+            if (ferror(f)) {
+                perror("cat_f");
+                exit(1);
+            }
             return;
         }
+        fwrite(buf, sizeof(char), n, stdout);
     }
 }
