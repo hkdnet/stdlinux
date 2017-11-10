@@ -10,6 +10,7 @@ int main(int argc, char const* argv[])
     int n;
     char c;
     if (argc != 2) {
+        fprintf(stderr, "Usage: %s N\n", argv[0]);
         exit(1);
     }
     n = atoi(argv[1]);
