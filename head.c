@@ -11,13 +11,31 @@ static void do_head(FILE* f, long nlines);
 int main(int argc, char const* argv[])
 {
     long n;
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s N\n", argv[0]);
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s n [file file...]\n", argv[0]);
         exit(1);
     }
     n = atol(argv[1]);
 
-    do_head(stdin, n);
+    if (argc == 2) {
+        do_head(stdin, n);
+        return 0;
+    }
+
+    int i;
+    for(i = 2; i < argc; i++) {
+        printf("i: %i\n", i);
+        FILE* f;
+        f = fopen(argv[i], "r");
+        if (!f) {
+            perror(argv[i]);
+            exit(1);
+        }
+        printf("n: %ld\n", n);
+        do_head(f, n);
+        fclose(f);
+    }
+
 
     return 0;
 }
