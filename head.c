@@ -24,14 +24,12 @@ int main(int argc, char const* argv[])
 
     int i;
     for(i = 2; i < argc; i++) {
-        printf("i: %i\n", i);
         FILE* f;
         f = fopen(argv[i], "r");
         if (!f) {
             perror(argv[i]);
             exit(1);
         }
-        printf("n: %ld\n", n);
         do_head(f, n);
         fclose(f);
     }
