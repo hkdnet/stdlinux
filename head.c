@@ -10,12 +10,12 @@ static void do_head(FILE* f, long nlines);
  */
 int main(int argc, char const* argv[])
 {
-    int n;
+    long n;
     if (argc != 2) {
         fprintf(stderr, "Usage: %s N\n", argv[0]);
         exit(1);
     }
-    n = atoi(argv[1]);
+    n = atol(argv[1]);
 
     do_head(stdin, n);
 
