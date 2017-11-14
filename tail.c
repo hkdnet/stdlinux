@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static void do_tail(FILE* f);
-
-#define DEFAULT_N_LINES 10
-
 typedef struct {
     char* line;
     long len;
 } line_t;
+
+static void do_tail(FILE* f);
+static void print_line_t(FILE* f, line_t l);
+
+#define DEFAULT_N_LINES 10
 
 int main(int argc, char * const argv[])
 {
@@ -40,11 +41,17 @@ do_tail(FILE* f)
 
     if (linecnt >= DEFAULT_N_LINES) {
         for(i = cur; i < DEFAULT_N_LINES; i++) {
-            fwrite(buf[i].line, sizeof(char), buf[i].len, stdout);
+            print_line_t(stdout, buf[i]);
         }
     }
     for(i = 0; i < cur; i++) {
-        fwrite(buf[i].line, sizeof(char), buf[i].len, stdout);
+        print_line_t(stdout, buf[i]);
     }
 
+}
+
+static void
+print_line_t(FILE* f, line_t l)
+{
+    fwrite(l.line, sizeof(char), l.len, f);
 }
