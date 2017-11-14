@@ -1,72 +1,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define _GNU_SOURCE
-#include <getopt.h>
-
-static void do_head(FILE* f, long nlines);
+static void do_tail(FILE* f);
 
 #define DEFAULT_N_LINES 10
 
-static struct option longopts[] = {
-    {"lines", required_argument, NULL, 'n'},
-    {"help", no_argument, NULL, 'h'},
-    {0, 0, 0, 0}
-};
+typedef struct {
+    char* line;
+    long len;
+} line_t;
 
-/**
- * Read from stdin, for N lines
- * Usage: head N
- */
 int main(int argc, char * const argv[])
 {
-    long n = DEFAULT_N_LINES;
-    int opt;
-    while((opt = getopt_long(argc, argv, "n:", longopts, NULL)) != -1) {
-        switch(opt) {
-            case 'n':
-                n = atol(optarg);
-                break;
-            case 'h':
-                printf("Usage: %s [-n lines] [FILE ...]\n", argv[0]);
-                exit(0);
-            case '?':
-                fprintf(stderr, "Usage: %s [-n lines] [FILE ...]\n", argv[0]);
-                exit(1);
-        }
-    }
-
-    if (argc == optind) {
-        do_head(stdin, n);
-        return 0;
-    }
-
-    int i;
-    for(i = optind; i < argc; i++) {
-        FILE* f;
-        f = fopen(argv[i], "r");
-        if (!f) {
-            perror(argv[i]);
-            exit(1);
-        }
-        do_head(f, n);
-        fclose(f);
-    }
-
+    do_tail(stdin);
 
     return 0;
 }
 
 static void
-do_head(FILE* f, long nlines)
+do_tail(FILE* f)
 {
-    char c;
-    while(nlines--) {
-        for(;;) {
-            c = fgetc(f);
-            if (c == EOF) exit(0);
-            if (putchar(c) < 0) exit(1); // error
-            if (c == '\n') break; // next line
+    int i;
+    int idx = 0;
+    line_t buf[DEFAULT_N_LINES];
+
+    char* line;
+    size_t linecap;
+    ssize_t linelen;
+    while((linelen = getline(&line, &linecap, f)) >= 0) {
+        line_t tmp = { line, linelen };
+        buf[idx % DEFAULT_N_LINES] = tmp;
+        idx++;
+    }
+
+    if (!feof(f)) exit(1);
+
+    if (idx > DEFAULT_N_LINES) {
+        for(i = idx; i < DEFAULT_N_LINES; i++) {
+            fwrite(buf[i].line, sizeof(char), buf[i].len, stdout);
         }
     }
+    for(i = 0; i < idx; i++) {
+        fwrite(buf[i].line, sizeof(char), buf[i].len, stdout);
+    }
+
 }
