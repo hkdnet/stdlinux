@@ -22,6 +22,7 @@ do_tail(FILE* f)
 {
     int i;
     int linecnt = 0;
+    int cur;
     line_t buf[DEFAULT_N_LINES];
 
     char* line;
@@ -35,12 +36,14 @@ do_tail(FILE* f)
 
     if (!feof(f)) exit(1);
 
+    cur = linecnt % DEFAULT_N_LINES;
+
     if (linecnt >= DEFAULT_N_LINES) {
-        for(i = linecnt; i < DEFAULT_N_LINES; i++) {
+        for(i = cur; i < DEFAULT_N_LINES; i++) {
             fwrite(buf[i].line, sizeof(char), buf[i].len, stdout);
         }
     }
-    for(i = 0; i < linecnt; i++) {
+    for(i = 0; i < cur; i++) {
         fwrite(buf[i].line, sizeof(char), buf[i].len, stdout);
     }
 
