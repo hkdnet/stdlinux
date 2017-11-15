@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 typedef struct {
-    char* line;
+    char** line;
     long len;
 } line_t;
 
@@ -30,7 +30,7 @@ do_tail(FILE* f)
     size_t linecap;
     ssize_t linelen;
     while((linelen = getline(&line, &linecap, f)) >= 0) {
-        line_t tmp = { line, linelen };
+        line_t tmp = { &line, linelen };
         buf[linecnt % DEFAULT_N_LINES] = tmp;
         linecnt++;
     }
