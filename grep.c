@@ -10,13 +10,14 @@ int main(int argc, char const* argv[])
 {
     int i;
     int ret;
+    int flags = REG_EXTENDED | REG_NOSUB | REG_NEWLINE;
     regex_t reg;
     char err[MAX_LINE_LENGTH];
     if (argc < 2) {
         fputs("No pattern\n", stderr);
         exit(1);
     }
-    ret = regcomp(&reg, argv[1], REG_EXTENDED | REG_NOSUB | REG_NEWLINE);
+    ret = regcomp(&reg, argv[1], flags);
     if (ret) {
         regerror(ret, &reg, err, sizeof err);
         fprintf(stderr, "%s\n", err);
