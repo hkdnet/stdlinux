@@ -1,31 +1,53 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <regex.h>
+#include <unistd.h>
 
 #define MAX_LINE_LENGTH 1024
 
 static void do_grep(FILE* f, regex_t* reg);
+static void print_usage(const char* name);
+static int f_v;
 
-int main(int argc, char const* argv[])
+int main(int argc, char* const argv[])
 {
     int i;
+    int o;
     int ret;
+    int flags = REG_EXTENDED | REG_NOSUB | REG_NEWLINE;
     regex_t reg;
     char err[MAX_LINE_LENGTH];
-    if (argc < 2) {
-        fputs("No pattern\n", stderr);
+
+    while((o =getopt(argc, argv, "iv")) != -1) {
+        switch(o) {
+            case 'i':
+                flags = flags | REG_ICASE;
+                break;
+            case 'v':
+                f_v = 1;
+                break;
+            case '?':
+                print_usage(argv[0]);
+                exit(1);
+        }
+    }
+
+    if (optind >= argc) {
+        print_usage(argv[0]);
         exit(1);
     }
-    ret = regcomp(&reg, argv[1], REG_EXTENDED | REG_NOSUB | REG_NEWLINE);
+
+    ret = regcomp(&reg, argv[optind], flags);
     if (ret) {
         regerror(ret, &reg, err, sizeof err);
         fprintf(stderr, "%s\n", err);
         exit(1);
     }
-    if (argc == 2) {
+    optind++;
+    if (optind == argc) {
         do_grep(stdin, &reg);
     } else {
-        for (i = 2; i < argc; i++) {
+        for (i = optind; i < argc; i++) {
             FILE *f;
             f = fopen(argv[i], "r");
             if (!f) {
@@ -48,7 +70,14 @@ do_grep(FILE* f, regex_t* reg)
 
     while(fgets(buf, MAX_LINE_LENGTH, f)) {
         match = regexec(reg, buf, 0, NULL, 0);
-        if (match == REG_NOMATCH) continue;
+        if (!f_v && match == REG_NOMATCH) continue;
+        if (f_v && match != REG_NOMATCH) continue;
         fputs(buf, stdout);
     }
 };
+
+static void
+print_usage(const char* name)
+{
+    fprintf(stderr, "Usage: %s [-iv] pattern [FILE ...]\n", name);
+}
