@@ -1,7 +1,8 @@
 all: \
-	bin/cat bin/wc_l bin/cat_tab \
-	bin/grep bin/head bin/head_bug bin/tail \
-	bin/slice bin/wc_l_n bin/cat_f
+	bin/cat bin/cat_tab bin/cat_f \
+	bin/grep bin/slice \
+	bin/head bin/head_bug bin/tail \
+	bin/wc_l bin/wc_l_n
 
 bin/cat: cat.c
 	gcc -Wall -o bin/cat cat.c
