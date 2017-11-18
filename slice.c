@@ -5,7 +5,7 @@
 
 #define MAX_LINE_LENGTH 1024
 
-static void do_grep(FILE* f, regex_t* reg);
+static void do_slice(FILE* f, regex_t* reg);
 static void print_usage(const char* name);
 static int f_v;
 
@@ -45,7 +45,7 @@ int main(int argc, char* const argv[])
     }
     optind++;
     if (optind == argc) {
-        do_grep(stdin, &reg);
+        do_slice(stdin, &reg);
     } else {
         for (i = optind; i < argc; i++) {
             FILE *f;
@@ -54,7 +54,7 @@ int main(int argc, char* const argv[])
                 perror(argv[i]);
                 exit(1);
             }
-            do_grep(f, &reg);
+            do_slice(f, &reg);
         }
 
     }
@@ -63,7 +63,7 @@ int main(int argc, char* const argv[])
 }
 
 static void
-do_grep(FILE* f, regex_t* reg)
+do_slice(FILE* f, regex_t* reg)
 {
     char buf[MAX_LINE_LENGTH];
     int match;
