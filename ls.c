@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <dirent.h>
 
 typedef struct dirent dirent_t;
@@ -8,6 +9,7 @@ int main(int argc, char const* argv[])
 {
     if (argc != 2) {
         printf("Usage: %s DIR", argv[0]);
+        exit(1);
     }
 
     DIR* d;
