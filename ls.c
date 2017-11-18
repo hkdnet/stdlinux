@@ -14,6 +14,10 @@ int main(int argc, char const* argv[])
 
     DIR* d;
     d = opendir(argv[1]);
+    if (!d) {
+        perror(argv[1]);
+        exit(1);
+    }
     do_dir(d);
     closedir(d);
 
