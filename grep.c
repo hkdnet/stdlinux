@@ -16,7 +16,7 @@ int main(int argc, char const* argv[])
         fputs("No pattern\n", stderr);
         exit(1);
     }
-    ret = regcomp(&reg, argv[1], 0);
+    ret = regcomp(&reg, argv[1], REG_EXTENDED | REG_NOSUB | REG_NEWLINE);
     if (ret) {
         regerror(ret, &reg, err, sizeof err);
         fprintf(stderr, "%s\n", err);
