@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #define MAX_LINE_LENGTH 1024
+#define MATCH_SIZE 1
 
 static void do_slice(FILE* f, regex_t* reg);
 static void print_usage(const char* name);
@@ -14,7 +15,7 @@ int main(int argc, char* const argv[])
     int i;
     int o;
     int ret;
-    int flags = REG_EXTENDED | REG_NOSUB | REG_NEWLINE;
+    int flags = REG_EXTENDED | REG_NEWLINE;
     regex_t reg;
     char err[MAX_LINE_LENGTH];
 
@@ -66,13 +67,19 @@ static void
 do_slice(FILE* f, regex_t* reg)
 {
     char buf[MAX_LINE_LENGTH];
+    regmatch_t pmatch[MATCH_SIZE];
     int match;
-
     while(fgets(buf, MAX_LINE_LENGTH, f)) {
-        match = regexec(reg, buf, 0, NULL, 0);
+        match = regexec(reg, buf, MATCH_SIZE, pmatch, 0);
         if (!f_v && match == REG_NOMATCH) continue;
         if (f_v && match != REG_NOMATCH) continue;
-        fputs(buf, stdout);
+        for (int i = 0; i < MATCH_SIZE; i++) {
+            regmatch_t tmp = pmatch[i];
+            int cur = tmp.rm_so;
+            int size = tmp.rm_eo - tmp.rm_so;
+            fwrite(&buf[cur], sizeof(char), size, stdout);
+        }
+        printf("\n");
     }
 };
 
