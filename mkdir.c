@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
+static void do_mkdir(const char* path);
+
 int main(int argc, char const* argv[])
 {
     int i;
@@ -11,11 +13,16 @@ int main(int argc, char const* argv[])
     }
 
     for (i = 1; i < argc; i++) {
-        if (mkdir(argv[i], 0777) < 0) {
-            perror(argv[i]);
-        }
+        do_mkdir(argv[i]);
     }
 
     return 0;
 }
 
+static void
+do_mkdir(const char* path)
+{
+    if (mkdir(path, 0777) < 0) {
+        perror(path);
+    }
+}
