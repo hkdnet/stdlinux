@@ -40,5 +40,6 @@ do_mkdir(const char* path)
 {
     if (mkdir(path, 0777) < 0) {
         perror(path);
+        exit(1);
     }
 }
