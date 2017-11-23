@@ -1,34 +1,74 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <unistd.h>
+#include <string.h>
 
 typedef struct dirent dirent_t;
-static void do_dir(DIR* d);
+static void do_dir(char* d);
+static int f_r;
 
-int main(int argc, char const* argv[])
+int main(int argc, char * const argv[])
 {
-    if (argc != 2) {
-        printf("Usage: %s DIR", argv[0]);
+    int o;
+    while((o = getopt(argc, argv, "R")) != -1) {
+        switch (o) {
+            case 'R':
+                f_r = 1;
+                break;
+            case '?':
+                fprintf(stderr, "Usage: %s [-R] DIR", argv[0]);
+                break;
+        }
+    }
+    if (optind == argc) {
+        fprintf(stderr, "Usage: %s [-R] DIR", argv[0]);
         exit(1);
     }
 
-    DIR* d;
-    d = opendir(argv[1]);
-    if (!d) {
-        perror(argv[1]);
-        exit(1);
-    }
-    do_dir(d);
-    closedir(d);
+    char* path = argv[optind];
+    do_dir(path);
 
     return 0;
 }
 
 static void
-do_dir(DIR* d)
+do_dir(char* path)
 {
+    DIR* d;
+    d = opendir(path);
+    if (!d) {
+        perror(path);
+        exit(1);
+    }
     dirent_t* ent;
     while((ent = readdir(d))) {
+        if (!strcmp(ent->d_name, ".")) continue;
+        if (!strcmp(ent->d_name, "..")) continue;
         printf("%s\n", ent->d_name);
     }
+    closedir(d);
+
+    if(!f_r) {
+        return;
+    }
+    char new_path[1024];
+
+    d = opendir(path);
+    if (!d) {
+        perror(path);
+        exit(1);
+    }
+    while((ent = readdir(d))) {
+        if (!strcmp(ent->d_name, ".")) continue;
+        if (!strcmp(ent->d_name, "..")) continue;
+        if (ent->d_type == DT_DIR) {
+            printf("\n");
+            sprintf(new_path, "%s/%s", path, ent->d_name);
+            printf("%s:\n", new_path);
+            do_dir(new_path);
+            memset(new_path, 0, 1024);
+        }
+    }
+    closedir(d);
 }
