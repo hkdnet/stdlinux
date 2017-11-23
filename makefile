@@ -2,6 +2,8 @@ all: \
 	bin/cat bin/cat_tab bin/cat_f \
 	bin/grep bin/slice \
 	bin/head bin/head_bug bin/tail \
+	bin/ls \
+	bin/mkdir \
 	bin/wc_l bin/wc_l_n
 
 bin/cat: cat.c
@@ -16,6 +18,10 @@ bin/head: head.c
 	gcc -Wall -o bin/head head.c
 bin/head_bug: head_bug.c
 	gcc -Wall -o bin/head_bug head_bug.c
+bin/ls: ls.c
+	gcc -Wall -o bin/ls ls.c
+bin/mkdir: mkdir.c
+	gcc -Wall -o bin/mkdir mkdir.c
 bin/slice: slice.c
 	gcc -Wall -o bin/slice slice.c
 bin/tail: tail.c
