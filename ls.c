@@ -43,6 +43,8 @@ do_dir(char* path)
     }
     dirent_t* ent;
     while((ent = readdir(d))) {
+        if (!strcmp(ent->d_name, ".")) continue;
+        if (!strcmp(ent->d_name, "..")) continue;
         printf("%s\n", ent->d_name);
     }
     closedir(d);
