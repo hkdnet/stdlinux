@@ -5,12 +5,16 @@
 
 typedef struct dirent dirent_t;
 static void do_dir(DIR* d);
+static int f_r;
 
 int main(int argc, char * const argv[])
 {
     int o;
-    while((o = getopt(argc, argv, "")) != -1) {
+    while((o = getopt(argc, argv, "R")) != -1) {
         switch (o) {
+            case 'R':
+                f_r = 1;
+                break;
             case '?':
                 fprintf(stderr, "Usage: %s [-R] DIR", argv[0]);
                 break;
