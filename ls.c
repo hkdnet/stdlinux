@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <string.h>
 
 typedef struct dirent dirent_t;
 static void do_dir(char* d);
@@ -43,6 +44,25 @@ do_dir(char* path)
     dirent_t* ent;
     while((ent = readdir(d))) {
         printf("%s\n", ent->d_name);
+    }
+    closedir(d);
+
+    if(!f_r) {
+        return;
+    }
+
+    d = opendir(path);
+    if (!d) {
+        perror(path);
+        exit(1);
+    }
+    while((ent = readdir(d))) {
+        if (!strcmp(ent->d_name, ".")) continue;
+        if (!strcmp(ent->d_name, "..")) continue;
+        if (ent->d_type == DT_DIR) {
+            printf("%s\n", ent->d_name);
+            do_dir(ent->d_name);
+        }
     }
     closedir(d);
 }
