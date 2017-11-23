@@ -1,21 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <unistd.h>
 
 typedef struct dirent dirent_t;
 static void do_dir(DIR* d);
 
-int main(int argc, char const* argv[])
+int main(int argc, char * const argv[])
 {
-    if (argc != 2) {
-        printf("Usage: %s DIR", argv[0]);
+    int o;
+    while((o = getopt(argc, argv, "")) != -1) {
+        switch (o) {
+            case '?':
+                fprintf(stderr, "Usage: %s [-R] DIR", argv[0]);
+                break;
+        }
+    }
+    if (optind == argc) {
+        fprintf(stderr, "Usage: %s [-R] DIR", argv[0]);
         exit(1);
     }
 
+    char* path = argv[optind];
+
     DIR* d;
-    d = opendir(argv[1]);
+    d = opendir(path);
     if (!d) {
-        perror(argv[1]);
+        perror(path);
         exit(1);
     }
     do_dir(d);
