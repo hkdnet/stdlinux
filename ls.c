@@ -52,6 +52,7 @@ do_dir(char* path)
     if(!f_r) {
         return;
     }
+    char new_path[1024];
 
     d = opendir(path);
     if (!d) {
@@ -62,8 +63,11 @@ do_dir(char* path)
         if (!strcmp(ent->d_name, ".")) continue;
         if (!strcmp(ent->d_name, "..")) continue;
         if (ent->d_type == DT_DIR) {
-            printf("%s\n", ent->d_name);
-            do_dir(ent->d_name);
+            printf("\n");
+            sprintf(new_path, "%s/%s", path, ent->d_name);
+            printf("%s:\n", new_path);
+            do_dir(new_path);
+            memset(new_path, 0, 1024);
         }
     }
     closedir(d);
