@@ -16,7 +16,7 @@ int main(int argc, char const* argv[])
         exit(1);
     }
 
-    rename(argv[1], argv[2]);
+    rename(argv[1], argv[2]); // renamed
 
 
     if (close(fd) < 0) {
