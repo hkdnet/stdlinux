@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 typedef struct dirent dirent_t;
-static void do_dir(DIR* d);
+static void do_dir(char* d);
 static int f_r;
 
 int main(int argc, char * const argv[])
@@ -26,24 +26,23 @@ int main(int argc, char * const argv[])
     }
 
     char* path = argv[optind];
+    do_dir(path);
 
+    return 0;
+}
+
+static void
+do_dir(char* path)
+{
     DIR* d;
     d = opendir(path);
     if (!d) {
         perror(path);
         exit(1);
     }
-    do_dir(d);
-    closedir(d);
-
-    return 0;
-}
-
-static void
-do_dir(DIR* d)
-{
     dirent_t* ent;
     while((ent = readdir(d))) {
         printf("%s\n", ent->d_name);
     }
+    closedir(d);
 }
