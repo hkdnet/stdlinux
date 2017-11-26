@@ -57,7 +57,7 @@ do_tail(FILE* f, int nlines)
     buf = (char *)ptr;
     memset(buf, 0, sizeof(char) * MAX_LINE_LENGTH * nlines);
 
-    while(fgets(buf + (MAX_LINE_LENGTH *cur), MAX_LINE_LENGTH, f)) {
+    while(fgets(buf + (cur * MAX_LINE_LENGTH), MAX_LINE_LENGTH, f)) {
         linecnt++;
         cur = linecnt % nlines;
     }
