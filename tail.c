@@ -12,10 +12,10 @@ int main(int argc, char * const argv[])
 {
     int c;
     int nlines = DEFAULT_N_LINES;
-    while((c = getopt(argc, argv, "n")) != -1) {
+    while((c = getopt(argc, argv, "n:")) != -1) {
         switch (c) {
             case 'n':
-                nlines = atoi(argv[optind]);
+                nlines = atoi(optarg);
                 break;
             case '?':
                 fprintf(stderr, "Usage: %s [-n NLIINES]", argv[0]);
