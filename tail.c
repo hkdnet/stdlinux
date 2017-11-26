@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
-static void do_tail(FILE* f);
+static void do_tail(FILE* f, int nlines);
 
 #define DEFAULT_N_LINES 10
 #define MAX_LINE_LENGTH 1024
@@ -21,28 +22,37 @@ int main(int argc, char * const argv[])
                 break;
         }
     }
-    do_tail(stdin);
+    do_tail(stdin, nlines);
 
     return 0;
 }
 
 static void
-do_tail(FILE* f)
+do_tail(FILE* f, int nlines)
 {
     int i;
     int cur = 0;
     long linecnt = 0;
-    char buf[DEFAULT_N_LINES][MAX_LINE_LENGTH] ;
+    char* buf[nlines];
+    for (i = 0; i < nlines; i++) {
+        void* ptr = malloc(sizeof(char) * MAX_LINE_LENGTH);
+        if (!ptr) {
+            perror("malloc");
+            exit(1);
+        }
+        buf[i] = (char *)ptr;
+        memset(buf[i], 0, sizeof(char) * MAX_LINE_LENGTH);
+    }
 
     while(fgets(buf[cur], MAX_LINE_LENGTH, f)) {
         linecnt++;
-        cur = linecnt % DEFAULT_N_LINES;
+        cur = linecnt % nlines;
     }
 
-    cur = linecnt % DEFAULT_N_LINES;
+    cur = linecnt % nlines;
 
-    if (linecnt >= DEFAULT_N_LINES) {
-        for(i = cur; i < DEFAULT_N_LINES; i++) {
+    if (linecnt >= nlines) {
+        for(i = cur; i < nlines; i++) {
             printf("%s", buf[i]);
         }
     }
@@ -50,4 +60,7 @@ do_tail(FILE* f)
         printf("%s", buf[i]);
     }
 
+    for (i = 0; i < nlines; i++) {
+        free(buf[i]);
+    }
 }
