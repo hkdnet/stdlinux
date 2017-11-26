@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 static void do_tail(FILE* f);
 
@@ -8,6 +9,14 @@ static void do_tail(FILE* f);
 
 int main(int argc, char * const argv[])
 {
+    int c;
+    while((c = getopt(argc, argv, "")) != -1) {
+        switch (c) {
+            case '?':
+                fprintf(stderr, "Usage: %s [-n NLIINES]", argv[0]);
+                break;
+        }
+    }
     do_tail(stdin);
 
     return 0;
