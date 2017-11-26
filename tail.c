@@ -10,8 +10,12 @@ static void do_tail(FILE* f);
 int main(int argc, char * const argv[])
 {
     int c;
-    while((c = getopt(argc, argv, "")) != -1) {
+    int nlines = DEFAULT_N_LINES;
+    while((c = getopt(argc, argv, "n")) != -1) {
         switch (c) {
+            case 'n':
+                nlines = atoi(argv[optind]);
+                break;
             case '?':
                 fprintf(stderr, "Usage: %s [-n NLIINES]", argv[0]);
                 break;
