@@ -17,7 +17,7 @@ int main(int argc, char const* argv[])
             exit(1);
         }
         if (pid == 0) { // child
-            execl("/bin/cat", "cat", NULL);
+            execlp("cat", "cat", NULL);
         }
         else { // parent
             printf("$ "); // prompt
