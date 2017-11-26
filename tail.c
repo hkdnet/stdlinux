@@ -20,7 +20,7 @@ int main(int argc, char * const argv[])
                 break;
             case '?':
                 fprintf(stderr, "Usage: %s [-n NLIINES] [FILE ...]", argv[0]);
-                break;
+                exit(1);
         }
     }
 
