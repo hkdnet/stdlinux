@@ -49,6 +49,10 @@ do_tail(FILE* f, int nlines)
     int cur = 0;
     long linecnt = 0;
     char* buf;
+    /*
+     * <--------------------------- ... -> malloc
+     * <-- line 1 --><-- line 2 --> ... -> usage
+     */
     void* ptr = malloc(sizeof(char) * MAX_LINE_LENGTH * nlines);
     if (!ptr) {
         perror("malloc");
