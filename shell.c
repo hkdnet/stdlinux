@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 #define MAX_LINE_LENGTH 1024
 
@@ -10,6 +11,7 @@ static int next_char(char* buf, int start, int size);
 int main(int argc, char const* argv[])
 {
     char buf[MAX_LINE_LENGTH];
+    memset(buf, 0x0, (sizeof(char)) * sizeof(buf));
     int status = 0;
 
     printf("$ "); // prompt
@@ -46,6 +48,7 @@ int main(int argc, char const* argv[])
 
             execvp(args[0], args);
             free(args);
+            memset(buf, 0x0, (sizeof(char)) * sizeof(buf));
         }
         else { // parent
             printf("$ "); // prompt
