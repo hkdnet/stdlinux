@@ -35,7 +35,6 @@ int main(int argc, char const* argv[])
             fprintf(stderr, "abnormal exit\n");
             exit(status);
         }
-
     }
     return 0;
 }
