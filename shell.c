@@ -24,7 +24,7 @@ int main(int argc, char const* argv[])
             waitpid(pid, &status, 0);
             if (WIFEXITED(status)) {
                 int exitstatus = WEXITSTATUS(status);
-                if (exitstatus != 0) fprintf(stderr, "process exited with %d", exitstatus);
+                if (exitstatus != 0) fprintf(stderr, "process exited with %d\n", exitstatus);
                 continue;
             }
             if (WIFSIGNALED(status)) {
