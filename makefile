@@ -5,6 +5,7 @@ all: \
 	bin/ls \
 	bin/mkdir \
 	bin/shell \
+	bin/sigwait \
 	bin/wc_l bin/wc_l_n
 
 bin/cat: cat.c
@@ -26,6 +27,8 @@ bin/mkdir: mkdir.c
 bin/slice: slice.c
 	gcc -Wall -o $@ $^
 bin/shell: shell.c
+	gcc -Wall -o $@ $^
+bin/sigwait: sigwait.c
 	gcc -Wall -o $@ $^
 bin/tail: tail.c
 	gcc -Wall -o $@ $^
