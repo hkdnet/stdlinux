@@ -21,12 +21,13 @@ int main(int argc, char * const argv[])
                 break;
         }
     }
+    char* path;
     if (optind == argc) {
-        fprintf(stderr, "Usage: %s [-R] DIR", argv[0]);
-        exit(1);
+        path = ".";
+    } else {
+        path = argv[optind];
     }
 
-    char* path = argv[optind];
     do_dir(path);
 
     return 0;
