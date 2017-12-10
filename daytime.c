@@ -10,7 +10,19 @@ static int open_connection(char *host, char *service);
 
 int main(int argc, char const* argv[])
 {
-    open_connection("localhost", "daytime");
+    int sock;
+    FILE *f;
+    char buf[1024];
+
+    sock = open_connection("localhost", "daytime");
+    f = fdopen(sock, "r");
+    if (!f) {
+        perror("fdopen(3)");
+        exit(1);
+    }
+    fgets(buf, sizeof buf, f);
+    fclose(f);
+    fputs(buf, stdout);
     return 0;
 }
 
