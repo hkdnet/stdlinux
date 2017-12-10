@@ -7,13 +7,17 @@
 typedef struct dirent dirent_t;
 static void do_dir(char* d);
 static void show_dir(char* path);
+static int f_l;
 static int f_r;
 
 int main(int argc, char * const argv[])
 {
     int o;
-    while((o = getopt(argc, argv, "R")) != -1) {
+    while((o = getopt(argc, argv, "lR")) != -1) {
         switch (o) {
+            case 'l':
+                f_l = 1;
+                break;
             case 'R':
                 f_r = 1;
                 break;
