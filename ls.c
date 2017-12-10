@@ -46,6 +46,7 @@ static void
 do_dir(char* path)
 {
     DIR* d;
+    char new_path[1024];
     d = opendir(path);
     if (!d) {
         perror(path);
@@ -62,7 +63,6 @@ do_dir(char* path)
     if(!f_r) {
         return;
     }
-    char new_path[1024];
 
     d = opendir(path);
     if (!d) {
