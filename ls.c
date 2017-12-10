@@ -6,6 +6,7 @@
 
 typedef struct dirent dirent_t;
 static void do_dir(char* d);
+static void show_dir(char* path);
 static int f_r;
 
 int main(int argc, char * const argv[])
@@ -46,7 +47,7 @@ do_dir(char* path)
     while((ent = readdir(d))) {
         if (!strcmp(ent->d_name, ".")) continue;
         if (!strcmp(ent->d_name, "..")) continue;
-        printf("%s\n", ent->d_name);
+        show_dir(ent->d_name);
     }
     closedir(d);
 
@@ -72,4 +73,10 @@ do_dir(char* path)
         }
     }
     closedir(d);
+}
+
+static void
+show_dir(char* path)
+{
+    printf("%s\n", path);
 }
