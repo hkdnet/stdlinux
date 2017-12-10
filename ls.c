@@ -3,8 +3,13 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <pwd.h>
+#include <libgen.h>
 
 typedef struct dirent dirent_t;
+typedef struct stat stat_t;
+typedef struct passwd passwd_t;
 static void do_dir(char* d);
 static void show_dir(char* path);
 static int f_l;
@@ -56,7 +61,8 @@ do_dir(char* path)
     while((ent = readdir(d))) {
         if (!strcmp(ent->d_name, ".")) continue;
         if (!strcmp(ent->d_name, "..")) continue;
-        show_dir(ent->d_name);
+        sprintf(new_path, "%s/%s", path, ent->d_name);
+        show_dir(new_path);
     }
     closedir(d);
 
@@ -86,5 +92,22 @@ do_dir(char* path)
 static void
 show_dir(char* path)
 {
-    printf("%s\n", path);
+    if (!f_l) {
+        printf("%s\n", path);
+        return;
+    }
+
+    stat_t buf;
+    if(stat(path, &buf) == -1) {
+        perror("stat");
+        exit(1);
+    }
+    uid_t uid = buf.st_uid;
+    passwd_t* pw = getpwuid(uid);
+    if(!pw) {
+        perror("getpwuid");
+        exit(1);
+    }
+    char* base = basename(path);
+    printf("%s %s\n", pw->pw_name, base);
 }
