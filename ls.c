@@ -26,6 +26,10 @@ int main(int argc, char * const argv[])
                 break;
         }
     }
+    if (f_l && f_r) {
+        fprintf(stderr, "Both -l and -R is not supported...\n");
+        exit(1);
+    }
     char* path;
     if (optind == argc) {
         path = ".";
