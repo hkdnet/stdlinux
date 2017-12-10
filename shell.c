@@ -47,10 +47,6 @@ int main(int argc, char const* argv[])
                 ++cur;
             }
 
-            for(int i = 0; i < count + 1; i++) {
-                printf("%02d: %s\n", i, args[i]);
-            }
-
             execvp(args[0], args);
             free(args);
             memset(buf, 0x0, (sizeof(char)) * sizeof(buf));
