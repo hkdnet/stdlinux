@@ -51,8 +51,8 @@ int main(int argc, char const* argv[])
             memset(buf, 0x0, (sizeof(char)) * sizeof(buf));
         }
         else { // parent
-            printf("$ "); // prompt
             waitpid(pid, &status, 0);
+            printf("$ "); // prompt
             if (WIFEXITED(status)) {
                 int exitstatus = WEXITSTATUS(status);
                 if (exitstatus != 0) fprintf(stderr, "process exited with %d\n", exitstatus);
