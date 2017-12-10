@@ -5,6 +5,7 @@
 
 #define MAX_LINE_LENGTH 1024
 
+static int empty_p(char c);
 static int next_empty(char* buf, int start, int size);
 static int next_char(char* buf, int start, int size);
 
@@ -46,6 +47,10 @@ int main(int argc, char const* argv[])
                 ++cur;
             }
 
+            for(int i = 0; i < count + 1; i++) {
+                printf("%02d: %s\n", i, args[i]);
+            }
+
             execvp(args[0], args);
             free(args);
             memset(buf, 0x0, (sizeof(char)) * sizeof(buf));
@@ -70,13 +75,19 @@ int main(int argc, char const* argv[])
     return 0;
 }
 
+static int empty_p(char c)
+{
+    if (c == '\0') return 1;
+    if (c == ' ') return 1;
+    return 0;
+}
+
 static int
 next_empty(char* buf, int start, int size)
 {
     int i;
     for(i = start; i < size; i++) {
-        if (buf[i] == '\0') return i;
-        if (buf[i] == ' ') return i;
+        if (empty_p(buf[i])) return i;
     }
     return -1;
 }
@@ -86,7 +97,7 @@ next_char(char* buf, int start, int size)
 {
     int i;
     for(i = start; i < size; i++) {
-        if (buf[i] != '\0' && buf[i] != ' ') return i;
+        if (!empty_p(buf[i])) return i;
     }
     return -1;
 }
