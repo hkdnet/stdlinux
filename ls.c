@@ -6,10 +6,12 @@
 #include <sys/stat.h>
 #include <pwd.h>
 #include <libgen.h>
+#include <time.h>
 
 typedef struct dirent dirent_t;
 typedef struct stat stat_t;
 typedef struct passwd passwd_t;
+typedef struct timespec timespec_t;
 static void do_dir(char* d);
 static void show_dir(char* path);
 static int f_l;
@@ -108,6 +110,15 @@ show_dir(char* path)
         perror("getpwuid");
         exit(1);
     }
+    timespec_t mtime = buf.st_mtimespec;
+    char* ts = ctime(&mtime.tv_sec);
+    for(int i = 0;; i++) {
+        if (ts[i] == '\n') {
+            ts[i] = '\0';
+            break;
+        }
+    }
+
     char* base = basename(path);
-    printf("%s %s\n", pw->pw_name, base);
+    printf("%s\t%s\t%s\n", pw->pw_name, ts, base);
 }
