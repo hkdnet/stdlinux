@@ -49,7 +49,7 @@ int main(int argc, char const* argv[])
 
             execvp(args[0], args);
             free(args);
-            memset(buf, 0x0, (sizeof(char)) * sizeof(buf));
+            memset(buf, 0x0, sizeof(buf));
         }
         else { // parent
             waitpid(pid, &status, 0);
