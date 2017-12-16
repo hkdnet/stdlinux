@@ -10,7 +10,7 @@ typedef struct line {
 } line_t;
 
 #define DEFAULT_N_LINES 10
-#define MAX_LINE_LENGTH 1024
+#define INIT_LINE_LENGTH 1024
 
 int main(int argc, char * const argv[])
 {
@@ -54,12 +54,12 @@ do_tail(FILE* f, int nlines)
     long linecnt = 0;
     line_t* buf = malloc(sizeof(line_t) * nlines);
     for (i = 0; i < nlines; i++) {
-        void* ptr = malloc(sizeof(char) * MAX_LINE_LENGTH);
+        void* ptr = malloc(sizeof(char) * INIT_LINE_LENGTH);
         if (!ptr) {
             perror("malloc");
             exit(1);
         }
-        line_t tmp = { (char *)ptr, MAX_LINE_LENGTH };
+        line_t tmp = { (char *)ptr, INIT_LINE_LENGTH };
         buf[i] = tmp;
     }
 
