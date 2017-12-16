@@ -4,6 +4,10 @@
 #include <string.h>
 
 static void do_tail(FILE* f, int nlines);
+typedef struct line {
+    char* line;
+    size_t size;
+} line_t;
 
 #define DEFAULT_N_LINES 10
 #define MAX_LINE_LENGTH 1024
