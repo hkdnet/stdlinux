@@ -63,7 +63,7 @@ do_tail(FILE* f, int nlines)
         buf[i] = tmp;
     }
 
-    while(fgets(buf[cur].line, MAX_LINE_LENGTH, f)) {
+    while(fgets(buf[cur].line, buf[cur].size, f)) {
         linecnt++;
         cur = linecnt % nlines;
     }
