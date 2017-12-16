@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+text_path = File.expand_path('../text/too_long.txt', __dir__)
+actual = `bin/tail -n 1 #{text_path}`
+expected = 'a' * 1025 + "\n"
+
+if actual != expected
+  warn <<-EOS
+  actual  : #{actual}
+  expected: #{expected}
+  EOS
+  exit 1
+end
+
