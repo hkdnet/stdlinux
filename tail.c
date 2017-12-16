@@ -52,18 +52,18 @@ do_tail(FILE* f, int nlines)
     int i;
     int cur = 0;
     long linecnt = 0;
-    char* buf[nlines];
+    line_t* buf = malloc(sizeof(line_t) * nlines);
     for (i = 0; i < nlines; i++) {
         void* ptr = malloc(sizeof(char) * MAX_LINE_LENGTH);
         if (!ptr) {
             perror("malloc");
             exit(1);
         }
-        buf[i] = (char *)ptr;
-        memset(buf[i], 0, sizeof(char) * MAX_LINE_LENGTH);
+        line_t tmp = { (char *)ptr, MAX_LINE_LENGTH };
+        buf[i] = tmp;
     }
 
-    while(fgets(buf[cur], MAX_LINE_LENGTH, f)) {
+    while(fgets(buf[cur].line, MAX_LINE_LENGTH, f)) {
         linecnt++;
         cur = linecnt % nlines;
     }
@@ -72,14 +72,16 @@ do_tail(FILE* f, int nlines)
 
     if (linecnt >= nlines) {
         for(i = cur; i < nlines; i++) {
-            printf("%s", buf[i]);
+            printf("%s", buf[i].line);
         }
     }
     for(i = 0; i < cur; i++) {
-        printf("%s", buf[i]);
+        printf("%s", buf[i].line);
     }
 
+
     for (i = 0; i < nlines; i++) {
-        free(buf[i]);
+        free(buf[i].line);
     }
+    free(buf);
 }
