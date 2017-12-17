@@ -64,6 +64,16 @@ do_tail(FILE* f, int nlines)
     }
 
     while(fgets(buf[cur].line, buf[cur].size, f)) {
+        while (strlen(buf[cur].line) == buf[cur].size - 1) {
+            size_t next_size = buf[cur].size * 2;
+            buf[cur].line = realloc(buf[cur].line, next_size);
+            if (!buf[cur].line) {
+                perror("realloc");
+                exit(1);
+            }
+            fgets(buf[cur].line + buf[cur].size - 1, buf[cur].size, f);
+            buf[cur].size = next_size;
+        }
         linecnt++;
         cur = linecnt % nlines;
     }
