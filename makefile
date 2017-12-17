@@ -39,5 +39,7 @@ bin/wc_l: wc_l.c
 	gcc -Wall -o $@ $^
 bin/wc_l_n: wc_l_n.c
 	gcc -Wall -o $@ $^
+test: all
+	test/test_tail
 
 .PHONY: all

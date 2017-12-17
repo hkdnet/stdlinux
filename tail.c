@@ -4,9 +4,13 @@
 #include <string.h>
 
 static void do_tail(FILE* f, int nlines);
+typedef struct line {
+    char* line;
+    size_t size;
+} line_t;
 
 #define DEFAULT_N_LINES 10
-#define MAX_LINE_LENGTH 1024
+#define INIT_LINE_LENGTH 1024
 
 int main(int argc, char * const argv[])
 {
@@ -48,20 +52,28 @@ do_tail(FILE* f, int nlines)
     int i;
     int cur = 0;
     long linecnt = 0;
-    char* buf;
-    /*
-     * <--------------------------- ... -> malloc
-     * <-- line 1 --><-- line 2 --> ... -> usage
-     */
-    void* ptr = malloc(sizeof(char) * MAX_LINE_LENGTH * nlines);
-    if (!ptr) {
-        perror("malloc");
-        exit(1);
+    line_t* buf = malloc(sizeof(line_t) * nlines);
+    for (i = 0; i < nlines; i++) {
+        void* ptr = malloc(sizeof(char) * INIT_LINE_LENGTH);
+        if (!ptr) {
+            perror("malloc");
+            exit(1);
+        }
+        line_t tmp = { (char *)ptr, INIT_LINE_LENGTH };
+        buf[i] = tmp;
     }
-    buf = (char *)ptr;
-    memset(buf, 0, sizeof(char) * MAX_LINE_LENGTH * nlines);
 
-    while(fgets(buf + (cur * MAX_LINE_LENGTH), MAX_LINE_LENGTH, f)) {
+    while(fgets(buf[cur].line, buf[cur].size, f)) {
+        while (strlen(buf[cur].line) == buf[cur].size - 1) {
+            size_t next_size = buf[cur].size * 2;
+            buf[cur].line = realloc(buf[cur].line, next_size);
+            if (!buf[cur].line) {
+                perror("realloc");
+                exit(1);
+            }
+            fgets(buf[cur].line + buf[cur].size - 1, buf[cur].size, f);
+            buf[cur].size = next_size;
+        }
         linecnt++;
         cur = linecnt % nlines;
     }
@@ -70,12 +82,16 @@ do_tail(FILE* f, int nlines)
 
     if (linecnt >= nlines) {
         for(i = cur; i < nlines; i++) {
-            printf("%s", buf + (i * MAX_LINE_LENGTH));
+            printf("%s", buf[i].line);
         }
     }
     for(i = 0; i < cur; i++) {
-        printf("%s", buf + (i * MAX_LINE_LENGTH));
+        printf("%s", buf[i].line);
     }
 
+
+    for (i = 0; i < nlines; i++) {
+        free(buf[i].line);
+    }
     free(buf);
 }
