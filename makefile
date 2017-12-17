@@ -3,6 +3,7 @@ all: \
 	bin/grep bin/slice \
 	bin/head bin/head_bug bin/tail \
 	bin/ls \
+	bin/daytime \
 	bin/mkdir \
 	bin/shell \
 	bin/sigwait \
@@ -13,6 +14,8 @@ bin/cat: cat.c
 bin/cat_f: cat_f.c
 	gcc -Wall -o $@ $^
 bin/cat_tab: cat_tab.c
+	gcc -Wall -o $@ $^
+bin/daytime: daytime.c
 	gcc -Wall -o $@ $^
 bin/grep: grep.c
 	gcc -Wall -o $@ $^
