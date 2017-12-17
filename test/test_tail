@@ -1,14 +1,20 @@
 #!/usr/bin/env ruby
 
-text_path = File.expand_path('../text/too_long.txt', __dir__)
-actual = `bin/tail -n 1 #{text_path}`
-expected = `tail -n 1 #{text_path}`
+[
+  '../text/1023.txt',
+  '../text/1024.txt',
+  '../text/1025.txt',
+].each do |f|
+  text_path = File.expand_path(f, __dir__)
 
-if actual != expected
-  warn <<-EOS
-  actual  : #{actual}
-  expected: #{expected}
-  EOS
-  exit 1
+  actual = `bin/tail -n 1 #{text_path}`
+  expected = `tail -n 1 #{text_path}`
+
+  if actual != expected
+    warn <<-EOS
+    actual  : #{actual}
+    expected: #{expected}
+    EOS
+    exit 1
+  end
 end
-
