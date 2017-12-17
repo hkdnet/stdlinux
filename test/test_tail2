@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-text_path = File.expand_path('../text/too_long.txt', __dir__)
+text_path = File.expand_path('../text/1023.txt', __dir__)
 actual = `bin/tail -n 1 #{text_path}`
 expected = `tail -n 1 #{text_path}`
 
