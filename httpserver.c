@@ -88,6 +88,11 @@ read_http_request_first_line(struct HTTPRequest *req, FILE* in)
     *p++ = '\0';
     req->path = xmalloc(p - path);
     strcpy(req->path, path);
+
+    if (strncasecmp(p, "HTTP/1.", strlen("HTTP1/")) != 0)
+        log_exit("parse error on request line(3): %s", buf);
+    p += strlen("HTTP/1.");
+    req->protocol_minor_verison = atoi(p);
 }
 
 struct HTTPHeaderField*
