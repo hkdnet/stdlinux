@@ -185,8 +185,16 @@ read_request(FILE* in)
 }
 
 void
+not_implemented(struct HTTPRequest *req, FILE* out)
+{
+    // TODO: return http response
+    fprintf(out, "Not implemented yet, sorry.\n");
+}
+
+void
 respond_to(struct HTTPRequest *req, FILE* out, const char* docroot)
 {
+    not_implemented(req, out);
 }
 
 void
