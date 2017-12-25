@@ -5,6 +5,8 @@
 #include <signal.h>
 #include <sys/errno.h>
 
+#define LINE_BUF_SIZE 1024
+
 struct HTTPHeaderField {
     char *name;
     char *value;
@@ -64,9 +66,66 @@ install_signal_handlers(void)
     trap_signal(SIGPIPE, signal_exit);
 }
 
+void
+read_http_request_first_line(struct HTTPRequest *req, FILE* in)
+{
+    char buf[LINE_BUF_SIZE];
+    if(!fgets(buf, LINE_BUF_SIZE, in))
+        log_exit("Failed to read a line");
+    if(!strcmp(buf, "\r\n"))
+        log_exit("Not a http request? The first line is...: %s", buf);
+
+    char *p, *path;
+    p = strchr(buf, ' ');
+    *p++ = '\0';
+    req->method = xmalloc(p - buf);
+    strcpy(req->method, buf);
+
+    path = p;
+    p = strchr(buf, ' ');
+    *p++ = '\0';
+    req->path = xmalloc(p - path);
+    strcpy(req->path, path);
+
+}
+
+struct HTTPHeaderField*
+read_header_field(FILE* in)
+{
+    char buf[LINE_BUF_SIZE];
+    if(!fgets(buf, LINE_BUF_SIZE, in))
+        log_exit("Failed to read a line");
+    if(!strcmp(buf, "\r\n")) return NULL;
+    struct HTTPHeaderField *h;
+    char *p;
+    p = strchr(buf, ':');
+    if (!p)
+        log_exit("Parse error on request header field: %s", buf);
+
+    *p++ = '\0';
+    h = xmalloc(sizeof(struct HTTPHeaderField));
+    h->name = xmalloc(p - buf);
+    strcpy(h->name, buf);
+
+    p += strspn(p, " \t");
+    h->value = xmalloc(strlen(p) + 1);
+    strcpy(h->value, p);
+
+    return h;
+}
+
 struct HTTPRequest*
 read_request(FILE* in)
 {
+    struct HTTPRequest *req;
+    struct HTTPHeaderField *h;
+    req = xmalloc(sizeof(struct HTTPRequest));
+    req->header = NULL;
+    while((h = read_header_field(in))) {
+        h->next = req->header;
+        req->header = h;
+    }
+
     return NULL;
 }
 
