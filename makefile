@@ -44,5 +44,6 @@ bin/wc_l_n: wc_l_n.c
 	gcc -Wall -o $@ $^
 test: all
 	test/test_tail
+	test/test_httpserver
 
 .PHONY: all

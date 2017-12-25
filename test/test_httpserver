@@ -1,0 +1,20 @@
+#!/bin/sh -eu
+
+root_dir=$(dirname $0)/../
+
+for file in $(ls $root_dir/requests);
+do
+    if [ -e $root_dir/responses/$file ]; then
+        expected=$(cat $root_dir/responses/$file)
+        actual=$(
+            cat $root_dir/requests/$file | $root_dir/bin/httpserver $root_dir
+        )
+        if [ $expected -eq $actual ]; then
+            echo ok
+        else
+            echo ng
+        fi
+    else
+        cat $root_dir/requests/$file | $root_dir/bin/httpserver $root_dir
+    fi
+done;
