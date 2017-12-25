@@ -77,16 +77,17 @@ read_http_request_first_line(struct HTTPRequest *req, FILE* in)
 
     char *p, *path;
     p = strchr(buf, ' ');
+    if (!p) log_exit("No space??");
     *p++ = '\0';
     req->method = xmalloc(p - buf);
     strcpy(req->method, buf);
 
     path = p;
-    p = strchr(buf, ' ');
+    p = strchr(path, ' ');
+    if (!p) log_exit("No space between path and version??");
     *p++ = '\0';
     req->path = xmalloc(p - path);
     strcpy(req->path, path);
-
 }
 
 struct HTTPHeaderField*
@@ -96,6 +97,7 @@ read_header_field(FILE* in)
     if(!fgets(buf, LINE_BUF_SIZE, in))
         log_exit("Failed to read a line");
     if(!strcmp(buf, "\r\n")) return NULL;
+    if(!strcmp(buf, "\n")) return NULL;
     struct HTTPHeaderField *h;
     char *p;
     p = strchr(buf, ':');
@@ -120,13 +122,14 @@ read_request(FILE* in)
     struct HTTPRequest *req;
     struct HTTPHeaderField *h;
     req = xmalloc(sizeof(struct HTTPRequest));
+    read_http_request_first_line(req, in);
     req->header = NULL;
     while((h = read_header_field(in))) {
         h->next = req->header;
         req->header = h;
     }
 
-    return NULL;
+    return req;
 }
 
 void
