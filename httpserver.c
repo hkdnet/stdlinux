@@ -6,6 +6,7 @@
 #include <sys/errno.h>
 
 #define LINE_BUF_SIZE 1024
+#define MAX_REQUEST_BODY_LENGTH 1024
 
 struct HTTPHeaderField {
     char *name;
@@ -121,6 +122,12 @@ read_header_field(FILE* in)
     return h;
 }
 
+long
+content_length(struct HTTPRequest *req)
+{
+    return 0;
+}
+
 struct HTTPRequest*
 read_request(FILE* in)
 {
@@ -132,6 +139,18 @@ read_request(FILE* in)
     while((h = read_header_field(in))) {
         h->next = req->header;
         req->header = h;
+    }
+    req->length = content_length(req);
+
+    if (req->length != 0) {
+        if(req->length > MAX_REQUEST_BODY_LENGTH)
+            log_exit("request body too long");
+        req->body = xmalloc(req->length);
+        if (fread(req->body, req->length, 1, in) < 1)
+            log_exit("failed to reqd request body");
+
+    } else {
+        req->body = NULL;
     }
 
     return req;
