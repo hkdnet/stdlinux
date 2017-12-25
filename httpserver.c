@@ -151,7 +151,7 @@ free_request(struct HTTPRequest *req)
     }
     free(req->method);
     free(req->path);
-    free(req->body);
+    // free(req->body);
     free(req);
 }
 
