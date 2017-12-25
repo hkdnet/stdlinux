@@ -122,10 +122,31 @@ read_header_field(FILE* in)
     return h;
 }
 
+char*
+lookup_header_field_value(struct HTTPRequest *req, char *key)
+{
+    struct HTTPHeaderField *h;
+    h = req->header;
+    while(h) {
+        if (strcasecmp(h->name, key) == 0)
+            return h->value;
+
+        h = h->next;
+    }
+    return NULL;
+}
+
 long
 content_length(struct HTTPRequest *req)
 {
-    return 0;
+    char *val;
+    long len;
+    val = lookup_header_field_value(req, "Content-Length");
+    if (!val) return 0;
+    len = atol(val);
+    if (len < 0) log_exit("negative Content-Length value");
+
+    return len;
 }
 
 struct HTTPRequest*
