@@ -184,6 +184,40 @@ read_request(FILE* in)
     return req;
 }
 
+// TODO: Deny '../../'
+char*
+build_fspath(const char* docroot, char *urlpath)
+{
+    char* s;
+    s = xmalloc(strlen(docroot) + 1 + strlen(urlpath) + 1);
+
+    sprintf(s, "%s/%s", docroot, urlpath);
+    return s;
+}
+
+struct FileInfo*
+get_file_info(const char* docroot, char *urlpath)
+{
+    struct FileInfo *info;
+    struct stat st;
+
+    info = xmalloc(sizeof(struct FileInfo));
+    info->path = build_fspath(docroot, urlpath);
+    info->ok = 0;
+    if(lstat(info->path, &st) < 0) return info;
+    if(S_ISREG(st.st_mode)) return info;
+    info->ok = 1;
+    info->size = st.st_size;
+    return info;
+}
+
+void
+free_fileinfo(struct FileInfo *info)
+{
+    free(info->path);
+    free(info);
+}
+
 void
 not_implemented(struct HTTPRequest *req, FILE* out)
 {
@@ -192,9 +226,31 @@ not_implemented(struct HTTPRequest *req, FILE* out)
 }
 
 void
+not_found(struct HTTPRequest *req, FILE *out)
+{
+    // TODO: return http response
+    fprintf(out, "Not found\n");
+}
+
+void
+do_file_response(struct HTTPRequest *req, FILE* out, const char* docroot)
+{
+    struct FileInfo *info;
+    info = get_file_info(docroot, req->path);
+    if (!info->ok) {
+        free_fileinfo(info);
+        not_found(req, out);
+        return;
+    }
+}
+
+void
 respond_to(struct HTTPRequest *req, FILE* out, const char* docroot)
 {
-    not_implemented(req, out);
+    if (strcmp(req->method, "GET") == 0)
+        do_file_response(req, out, docroot);
+    else
+        not_implemented(req, out);
 }
 
 void
@@ -233,31 +289,4 @@ int main(int argc, char const* argv[])
     install_signal_handlers();
     service(stdin, stdout, argv[1]);
     return 0;
-}
-
-// TODO: Deny '../../'
-char*
-build_fspath(char* docroot, char *urlpath)
-{
-    char* s;
-    s = xmalloc(strlen(docroot) + 1 + strlen(urlpath) + 1);
-
-    sprintf(s, "%s/%s", docroot, urlpath);
-    return s;
-}
-
-struct FileInfo*
-get_file_info(char* docroot, char *urlpath)
-{
-    struct FileInfo *info;
-    struct stat st;
-
-    info = xmalloc(sizeof(struct FileInfo));
-    info->path = build_fspath(docroot, urlpath);
-    info->ok = 0;
-    if(lstat(info->path, &st) < 0) return info;
-    if(S_ISREG(st.st_mode)) return info;
-    info->ok = 1;
-    info->size = st.st_size;
-    return info;
 }
