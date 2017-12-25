@@ -95,7 +95,7 @@ read_header_field(FILE* in)
 {
     char buf[LINE_BUF_SIZE];
     if(!fgets(buf, LINE_BUF_SIZE, in))
-        log_exit("Failed to read a line");
+        log_exit("Failed to read a line for header");
     if(!strcmp(buf, "\r\n")) return NULL;
     if(!strcmp(buf, "\n")) return NULL;
     struct HTTPHeaderField *h;
