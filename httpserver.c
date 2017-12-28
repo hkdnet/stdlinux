@@ -237,7 +237,7 @@ output_common_header_fields(struct HTTPRequest *req, FILE *out, char *status)
     tm = gmtime(&t);
     if (!tm) log_exit("gemtime failed %s", strerror(errno));
     strftime(buf, TIME_BUF_SIZE, "%a, %d %b %Y %H:%M:%S GMT", tm);
-    fprintf(out, "HTTP/1.%d: %s\r\n", HTTP_MINOR_VERSION, status);
+    fprintf(out, "HTTP/1.%d %s\r\n", HTTP_MINOR_VERSION, status);
     fprintf(out, "Date: %s\r\n", buf);
     fprintf(out, "Server: %s/%s\r\n", SERVER_NAME, SERVER_VERSION);
     fprintf(out, "Connection: close\r\n");
