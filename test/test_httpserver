@@ -10,9 +10,9 @@ do
             cat $root_dir/requests/$file | $root_dir/bin/httpserver $root_dir/docroot
         )
         if [ "$expected" = "$actual" ]; then
-            echo ok
+            echo "ok $file"
         else
-            echo ng
+            echo "ng $file"
             echo "expected\n$expected"
             echo "actual\n$actual"
         fi
