@@ -7,7 +7,7 @@ do
     if [ -e $root_dir/responses/$file ]; then
         expected=$(cat $root_dir/responses/$file)
         actual=$(
-            cat $root_dir/requests/$file | $root_dir/bin/httpserver $root_dir
+            cat $root_dir/requests/$file | $root_dir/bin/httpserver $root_dir/docroot
         )
         if [ "$expected" = "$actual" ]; then
             echo ok
