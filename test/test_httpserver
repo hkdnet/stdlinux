@@ -9,10 +9,12 @@ do
         actual=$(
             cat $root_dir/requests/$file | $root_dir/bin/httpserver $root_dir
         )
-        if [ $expected -eq $actual ]; then
+        if [ "$expected" = "$actual" ]; then
             echo ok
         else
             echo ng
+            echo "expected\n$expected"
+            echo "actual\n$actual"
         fi
     else
         cat $root_dir/requests/$file | $root_dir/bin/httpserver $root_dir

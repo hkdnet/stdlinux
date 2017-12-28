@@ -228,8 +228,7 @@ not_implemented(struct HTTPRequest *req, FILE* out)
 void
 not_found(struct HTTPRequest *req, FILE *out)
 {
-    // TODO: return http response
-    fprintf(out, "Not found\n");
+    fprintf(out, "HTTP/1.%d 404 Not Found\n", req->protocol_minor_verison);
 }
 
 void
