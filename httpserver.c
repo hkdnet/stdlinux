@@ -213,7 +213,7 @@ get_file_info(const char* docroot, char *urlpath)
     info->path = build_fspath(docroot, urlpath);
     info->ok = 0;
     if(lstat(info->path, &st) < 0) return info;
-    if(S_ISREG(st.st_mode)) return info;
+    if(!S_ISREG(st.st_mode)) return info;
     info->ok = 1;
     info->size = st.st_size;
     return info;
