@@ -227,19 +227,6 @@ free_fileinfo(struct FileInfo *info)
 }
 
 void
-not_implemented(struct HTTPRequest *req, FILE* out)
-{
-    // TODO: return http response
-    fprintf(out, "Not implemented yet, sorry.\n");
-}
-
-void
-not_found(struct HTTPRequest *req, FILE *out)
-{
-    fprintf(out, "HTTP/1.%d 404 Not Found\n", req->protocol_minor_verison);
-}
-
-void
 output_common_header_fields(struct HTTPRequest *req, FILE *out, char *status)
 {
     time_t t;
@@ -255,6 +242,19 @@ output_common_header_fields(struct HTTPRequest *req, FILE *out, char *status)
     fprintf(out, "Server: %s/%s\r\n", SERVER_NAME, SERVER_VERSION);
     fprintf(out, "Connection: close\r\n");
 
+}
+
+void
+not_implemented(struct HTTPRequest *req, FILE* out)
+{
+    // TODO: return http response
+    fprintf(out, "Not implemented yet, sorry.\n");
+}
+
+void
+not_found(struct HTTPRequest *req, FILE *out)
+{
+    output_common_header_fields(req, out, "404 Not Found");
 }
 
 char*
