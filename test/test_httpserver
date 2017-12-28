@@ -1,8 +1,8 @@
 #!/bin/sh -eu
 
-root_dir=$(dirname $0)/../
+root_dir=$(cd $(dirname $0)/..; pwd)
 
-for file in $(ls $root_dir/requests);
+for file in $(ls ${root_dir}/requests);
 do
     if [ -e $root_dir/responses/$file ]; then
         expected=$(cat $root_dir/responses/$file)
