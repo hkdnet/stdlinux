@@ -1,4 +1,9 @@
-GET /index.html HTTP/1.1
+HTTP/1.1 200 OK
+Date: Thu, 28 Dec 2017 13:47:25 GMT
+Server: httpserver/0.1
+Connection: close
+Content-Length: 190
+Content-Type: text/html
 
 <HTML>
   <HEAD>
