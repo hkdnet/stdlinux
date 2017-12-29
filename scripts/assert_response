@@ -26,8 +26,8 @@ class AssertResponse
     if ok?
       puts "ok #{@path}"
     else
-      expected_file = Tempfile.open { |e| e.write(@expected); e }
-      actual_file = Tempfile.open { |e| e.write(@actual); e }
+      expected_file = Tempfile.open { |e| e.write(expected); e }
+      actual_file = Tempfile.open { |e| e.write(actual); e }
       cmd = "diff #{expected_file.path} #{actual_file.path}"
       puts cmd
       system(cmd)
