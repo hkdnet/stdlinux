@@ -296,8 +296,7 @@ do_file_response(struct HTTPRequest *req, FILE* out, const char* docroot)
         if (n < 0)
             log_exit("failed to read %s: %s", info->path, strerror(errno));
         if (n == 0) break;
-        if(fwrite(buf, n, 1, out) < n)
-            log_exit("failed to write to socket: %s", strerror(errno));
+        fprintf(out, "%s", buf);
     }
     fflush(out);
     free_fileinfo(info);
