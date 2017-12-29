@@ -299,6 +299,8 @@ do_file_response(struct HTTPRequest *req, FILE* out, const char* docroot)
         if(fwrite(buf, n, 1, out) < n)
             log_exit("failed to write to socket: %s", strerror(errno));
     }
+    fflush(out);
+    free_fileinfo(info);
 }
 
 void
