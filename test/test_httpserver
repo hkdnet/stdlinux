@@ -4,19 +4,6 @@ root_dir=$(cd $(dirname $0)/..; pwd)
 
 for file in $(ls ${root_dir}/requests);
 do
-    if [ -e $root_dir/responses/$file ]; then
-        expected=$(cat $root_dir/responses/$file)
-        actual=$(
-            cat $root_dir/requests/$file | $root_dir/bin/httpserver $root_dir/docroot
-        )
-        if [ "$expected" = "$actual" ]; then
-            echo "ok $file"
-        else
-            echo "ng $file"
-            echo "expected\n$expected"
-            echo "actual\n$actual"
-        fi
-    else
-        cat $root_dir/requests/$file | $root_dir/bin/httpserver $root_dir
-    fi
+    echo "Start test for $file"
+    $root_dir/scripts/assert_response $file
 done;

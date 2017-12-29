@@ -1,0 +1,64 @@
+#! /usr/bin/env ruby
+
+require 'tempfile'
+
+class HttpExecutor
+  def initialize(path)
+    @root = File.expand_path('..', __dir__).freeze
+    @request_path = File.join(@root, 'requests', path)
+    @docroot_path = File.join(@root, 'docroot')
+    @bin_path = File.join(@root, 'bin', 'httpserver')
+  end
+
+  def exec
+    res = `cat #{@request_path} | #{@bin_path} #{@docroot_path}`
+    raise "Fail with #{@request_path}" unless $?.success?
+    res
+  end
+end
+
+class AssertResponse
+  def initialize(path)
+    @path = path
+  end
+
+  def assert
+    if ok?
+      puts "ok #{@path}"
+    else
+      expected_file = Tempfile.open { |e| e.write(@expected); e }
+      actual_file = Tempfile.open { |e| e.write(@actual); e }
+      cmd = "diff #{expected_file.path} #{actual_file.path}"
+      puts cmd
+      system(cmd)
+    end
+
+  end
+
+  private
+
+  def ok?
+    actual == expected
+  end
+
+  def actual
+    @actual ||= HttpExecutor.new(@path).exec.gsub(/^Date:.*\r\n/, "\r\n")
+  end
+
+  def expected
+    @expected ||=
+      begin
+        text = File.read(File.join(response_dir, @path))
+        text.gsub(/^Date:.*/, '').gsub("\n", "\r\n")
+      end
+  end
+
+  def response_dir
+    @response_dir ||= File.expand_path('../responses', __dir__).freeze
+  end
+end
+
+path = ARGV.first
+
+AssertResponse.new(path).assert
+
