@@ -255,6 +255,7 @@ void
 not_found(struct HTTPRequest *req, FILE *out)
 {
     output_common_header_fields(req, out, "404 Not Found");
+    fprintf(out, "\r\n");
 }
 
 char*
