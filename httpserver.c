@@ -447,7 +447,18 @@ server_main(int server_fd, char* docroot)
 void
 become_daemon()
 {
-    // TODO: impl
+    int n;
+    if (chdir("/") < 0) log_exit("chdir(2) failed; %s", strerror(errno));
+
+    freopen("/dev/null", "r", stdin);
+    freopen("/dev/null", "w", stdout);
+    freopen("/dev/null", "w", stderr);
+
+    n = fork();
+
+    if(n < 0) log_exit("fork(2) failed: %s", strerror(errno));
+    if(n != 0) _exit(0); // parent
+    if (setsid() < 0) log_exit("setsid(2) failed: %s", strerror(errno));
 }
 
 int main(int argc, char * const argv[])
