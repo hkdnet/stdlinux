@@ -402,10 +402,27 @@ setup_environment(char* root, char* user, char* group)
 
 
 void
-server_main(int fd, char* docroot)
+server_main(int server_fd, char* docroot)
 {
-    // TODO: impl
-    service(stdin, stdout, docroot);
+    for(;;) {
+        struct sockaddr_storage addr;
+        socklen_t addrlen = sizeof addr;
+        int sock;
+        int pid;
+        sock = accept(server_fd, (struct sockaddr*)&addr, &addrlen);
+        if (sock < 0) log_exit("accept(2) failed: %s", strerror(errno));
+        pid = fork();
+        if (pid < 0) exit(3);
+        if (pid ==0) {
+            // child
+            FILE *inf = fdopen(sock, "r");
+            FILE *outf = fdopen(sock, "w");
+            service(inf, outf, docroot);
+            exit(0);
+        }
+        close(sock);
+
+    }
 }
 
 void
