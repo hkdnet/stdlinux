@@ -11,7 +11,7 @@ class HttpExecutor
   end
 
   def exec
-    res = `cat #{@request_path} | #{@bin_path} #{@docroot_path}`
+    res = `cat #{@request_path} | #{@bin_path} --debug #{@docroot_path}`
     raise "Fail with #{@request_path}" unless $?.success?
     res
   end
