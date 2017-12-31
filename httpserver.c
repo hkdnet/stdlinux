@@ -95,9 +95,28 @@ trap_signal(int sig, void (*handler)(int))
 }
 
 void
+noop_handler(int sig)
+{
+    ;
+}
+
+void
+detach_children(void)
+{
+    struct sigaction act;
+    act.sa_handler = noop_handler;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags = SA_RESTART | SA_NOCLDWAIT;
+    if (sigaction(SIGCHLD, &act, NULL) < 0) {
+        log_exit("sigaction() failed: %s", strerror(errno));
+    }
+}
+
+void
 install_signal_handlers(void)
 {
     trap_signal(SIGPIPE, signal_exit);
+    detach_children(); // ここであってる？
 }
 
 void
