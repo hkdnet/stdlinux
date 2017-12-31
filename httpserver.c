@@ -506,7 +506,7 @@ int main(int argc, char * const argv[])
     char *group = NULL;
     int opt;
 
-    while((opt = getopt_long(argc, argv, "", longopts, NULL)) != -1) {
+    while((opt = getopt_long(argc, argv, "chu:p:g:", longopts, NULL)) != -1) {
         switch (opt) {
             case 0:
                 break;
