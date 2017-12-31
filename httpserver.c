@@ -1,9 +1,11 @@
+#include <getopt.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <syslog.h>
 #include <time.h>
 #include <unistd.h>
 #include <sys/errno.h>
@@ -16,6 +18,18 @@
 #define HTTP_MINOR_VERSION req->protocol_minor_verison
 #define SERVER_NAME "httpserver"
 #define SERVER_VERSION "0.1"
+#define USAGE "Usage: %s [--port=n] [--chroot --user=u --group=g] <docroot>\n"
+
+static int debug_mode = 0;
+static struct option longopts[] = {
+    {"debug", no_argument, &debug_mode, 1},
+    {"chroot", no_argument, NULL, 'c'},
+    {"user", no_argument, NULL, 'u'},
+    {"group", no_argument, NULL, 'g'},
+    {"port", no_argument, NULL, 'p'},
+    {"help", no_argument, NULL, 'h'},
+    {0, 0, 0, 0}
+};
 
 struct HTTPHeaderField {
     char *name;
@@ -339,13 +353,85 @@ service(FILE* in, FILE* out, const char* docroot)
     free_request(req);
 }
 
-int main(int argc, char const* argv[])
+int
+listen_socket(char* port)
 {
-    if(argc != 2) {
-        fprintf(stderr, "Usage: %s <docroot>\n", argv[0]);
+    // TODO: impl
+    return 0;
+}
+
+void
+setup_environment(char* root, char* user, char* group)
+{
+    // TODO: impl
+}
+
+
+
+void
+server_main(int fd, char* docroot)
+{
+    // TODO: impl
+    service(stdin, stdout, docroot);
+}
+
+void
+become_daemon()
+{
+    // TODO: impl
+}
+
+int main(int argc, char * const argv[])
+{
+    int server_fd;
+    char *port = NULL;
+    char *docroot = NULL;
+    int do_chroot = 0;
+    char *user = NULL;
+    char *group = NULL;
+    int opt;
+
+    while((opt = getopt_long(argc, argv, "", longopts, NULL)) != -1) {
+        switch (opt) {
+            case 0:
+                break;
+            case 'c':
+                do_chroot = 1;
+                break;
+            case 'u':
+                user = optarg;
+                break;
+            case 'g':
+                group = optarg;
+                break;
+            case 'p':
+                port = optarg;
+                break;
+            case 'h':
+                fprintf(stdout, USAGE, argv[0]);
+                exit(0);
+            case '?':
+                fprintf(stderr, USAGE, argv[0]);
+                exit(1);
+        }
+    }
+
+    if(optind != argc - 1) {
+        fprintf(stderr, USAGE, argv[0]);
         exit(1);
     }
+    docroot = argv[optind];
+
+    if (do_chroot) {
+        setup_environment(docroot, user, group);
+        docroot = "";
+    }
     install_signal_handlers();
-    service(stdin, stdout, argv[1]);
+    server_fd = listen_socket(port);
+    if (!debug_mode) {
+        openlog(SERVER_NAME, LOG_PID|LOG_NDELAY, LOG_DAEMON);
+        become_daemon();
+    }
+    server_main(server_fd, docroot);
     return 0;
 }
