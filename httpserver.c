@@ -15,7 +15,7 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 
-#define LINE_BUF_SIZE 1024
+#define LINE_BUF_SIZE 4096
 #define MAX_REQUEST_BODY_LENGTH 1024
 #define TIME_BUF_SIZE 64
 #define BLOCK_BUF_SIZE 1024
